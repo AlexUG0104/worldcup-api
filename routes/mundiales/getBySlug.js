@@ -7,5 +7,8 @@ export const getBySlug = (req, res) => {
         return res.status(404).json({ error: "Mundial no encontrado" });
     }
 
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    selectedMundial.imagen = `${baseUrl}/imagenes/${selectedMundial.imagen}`;
+
     res.json(selectedMundial);
 };
