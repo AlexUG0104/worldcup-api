@@ -1,0 +1,25 @@
+{
+  "name": "worldcup-api",
+  "version": "1.0.0",
+  "description": "API REST de la Copa Mundial de la FIFA - Laboratorio de Multimedios",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "seed": "node database/seed.js"
+  },
+  "keywords": [
+    "worldcup",
+    "api",
+    "express",
+    "sqlite"
+  ],
+  "author": "Estudiante de Multimedios",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1",
+    "zod": "^4.4.3"
+  }
+}
