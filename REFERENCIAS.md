@@ -27,7 +27,7 @@ Este documento recopila las fuentes de información técnica, documentación ofi
 ## 🏆 Fuentes de Información sobre los Mundiales de la FIFA
 
 1. **FIFA Official Website**
-   * *Sitio consultado:* [https://www.fifa.com/es/tournaments/mens/worldcup](https://www.fifa.com/es/tournaments/mens/worldcup)
+com/es/tournaments/mens/worldcup)
    * *Propósito:* Verificación de datos oficiales sobre campeones, subcampeones, cantidad de equipos participantes, goleadores individuales y sedes organizadoras de cada mundial.
 
 2. **Wikipedia - Copa Mundial de la FIFA**

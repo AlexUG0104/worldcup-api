@@ -67,7 +67,7 @@ router.get('/mundiales', async (req, res, next) => {
         const queryValidation = includeQuerySchema.safeParse(req.query);
         if (!queryValidation.success) {
             return res.status(400).json({
-                error: queryValidation.error.errors[0].message
+                error: queryValidation.error.issues[0].message
             });
         }
 
@@ -108,7 +108,7 @@ router.get('/mundial/:slug', async (req, res, next) => {
         const paramValidation = slugParamSchema.safeParse(req.params);
         if (!paramValidation.success) {
             return res.status(400).json({
-                error: paramValidation.error.errors[0].message
+                error: paramValidation.error.issues[0].message
             });
         }
 
@@ -134,7 +134,7 @@ router.get('/campeon/:pais', async (req, res, next) => {
         const paramValidation = campeonParamSchema.safeParse(req.params);
         if (!paramValidation.success) {
             return res.status(400).json({
-                error: paramValidation.error.errors[0].message
+                error: paramValidation.error.issues[0].message
             });
         }
 
@@ -155,7 +155,7 @@ router.get('/search/:text', async (req, res, next) => {
         const paramValidation = searchParamSchema.safeParse(req.params);
         if (!paramValidation.success) {
             return res.status(400).json({
-                error: paramValidation.error.errors[0].message
+                error: paramValidation.error.issues[0].message
             });
         }
 
