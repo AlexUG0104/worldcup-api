@@ -1,17 +1,24 @@
-const fs = require('fs');
-const path = require('path');
-const db = require('./db');
+import { DatabaseSync } from "node:sqlite";
+import { cwd } from "node:process";
+import fs from "node:fs";
+import path from "node:path";
+
+// Asegurar que exista la carpeta data
+fs.mkdirSync(path.join(cwd(), 'data'), { recursive: true });
+
+const DATABASE_FILE = path.join(cwd(), 'data', 'worldcup.db');
+const CREATE_SCRIPT = path.join(cwd(), 'database', 'schema.sql');
 
 async function seed() {
     try {
         console.log('Iniciando poblamiento de la base de datos...');
 
-        // Leer el archivo schema.sql
-        const schemaPath = path.join(__dirname, 'schema.sql');
-        const schema = fs.readFileSync(schemaPath, 'utf8');
+        // Establecemos acceso a la base de datos usando DatabaseSync de node:sqlite
+        const db = new DatabaseSync(DATABASE_FILE);
 
-        // Ejecutar el esquema para limpiar y recrear la tabla
-        await db.exec(schema);
+        // Lee el script de esquema SQL y crea la estructura
+        const sql = fs.readFileSync(CREATE_SCRIPT, "utf-8");
+        db.exec(sql);
         console.log('Esquema de base de datos creado exitosamente.');
 
         const mundialesData = [
@@ -95,34 +102,32 @@ async function seed() {
             }
         ];
 
-        const insertQuery = `
+        // Preparar inserción de datos usando named parameters
+        const insert = db.prepare(`
             INSERT INTO mundiales (nombre, anio, sede, campeon, subcampeon, goleador, equipos, imagen, slug, resumen, descripcion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
+            VALUES (:nombre, :anio, :sede, :campeon, :subcampeon, :goleador, :equipos, :imagen, :slug, :resumen, :descripcion)
+        `);
 
         for (const m of mundialesData) {
-            await db.run(insertQuery, [
-                m.nombre,
-                m.anio,
-                m.sede,
-                m.campeon,
-                m.subcampeon,
-                m.goleador,
-                m.equipos,
-                m.imagen,
-                m.slug,
-                m.resumen,
-                m.descripcion
-            ]);
+            insert.run({
+                nombre: m.nombre,
+                anio: m.anio,
+                sede: m.sede,
+                campeon: m.campeon,
+                subcampeon: m.subcampeon,
+                goleador: m.goleador,
+                equipos: m.equipos,
+                imagen: m.imagen,
+                slug: m.slug,
+                resumen: m.resumen,
+                descripcion: m.descripcion
+            });
             console.log(`Mundial insertado: ${m.nombre}`);
         }
 
         console.log('Poblamiento de la base de datos completado exitosamente.');
     } catch (error) {
         console.error('Error durante el seed de la base de datos:', error);
-    } finally {
-        // Cerrar la base de datos después de poblar
-        await db.close();
     }
 }
 
