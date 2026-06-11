@@ -2,19 +2,19 @@
 
 Este proyecto es una API REST académica desarrollada para el curso de **Multimedios**. Permite consultar información histórica sobre distintas ediciones de la Copa Mundial de Fútbol de la FIFA, incluyendo sedes, campeones, subcampeones, goleadores y más.
 
-La API sirve imágenes estáticas y aplica validaciones robustas con **Zod** para sus parámetros de entrada.
+La API sirve imágenes estáticas, genera URLs completas de forma dinámica para su visualización y aplica validaciones robustas con **Zod** para sus parámetros de entrada.
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **Node.js**: Entorno de ejecución de JavaScript.
-* **Express**: Framework minimalista para la creación de la API.
-* **SQLite** (a través de `sqlite3`): Base de datos relacional ligera sin servidor externo.
+* **Node.js**: Entorno de ejecución de JavaScript (ES Modules nativo).
+* **Express**: Framework minimalista para la creación de la API con enrutamiento estricto habilitado (`strict routing`).
+* **SQLite (nativo con `node:sqlite`)**: Uso de la nueva API nativa `DatabaseSync` disponible desde Node.js 22+.
 * **Zod**: Biblioteca de declaración y validación de esquemas para JavaScript.
 * **Archivos Estáticos**: Middleware de Express para servir las imágenes oficiales de cada mundial.
 
-> **Nota:** No se utilizaron TypeScript, ORMs complejos (como Prisma o Sequelize), ni arquitecturas complejas de sobreingeniería para cumplir con las pautas estrictas del curso.
+> **Nota:** No se utilizaron TypeScript, ORMs complejos (como Prisma o Sequelize), ni arquitecturas complejas de sobreingeniería para cumplir con las pautas estrictas de la cátedra del curso.
 
 ---
 
@@ -23,7 +23,7 @@ La API sirve imágenes estáticas y aplica validaciones robustas con **Zod** par
 Siga los siguientes pasos para configurar y ejecutar el proyecto en su máquina local:
 
 ### 1. Clonar el repositorio e instalar las dependencias
-Desde la carpeta raíz del proyecto (`/worldcup-api`), ejecute el siguiente comando para instalar las librerías necesarias (`express`, `zod`, `sqlite3`):
+Desde la carpeta raíz del proyecto (`/worldcup-api`), ejecute el siguiente comando para instalar las librerías necesarias (`express`, `zod`):
 
 ```bash
 npm install
@@ -35,7 +35,7 @@ Para crear las tablas de la base de datos SQLite y poblar la información inicia
 ```bash
 npm run seed
 ```
-*Este comando leerá el esquema SQL en `database/schema.sql`, creará la base de datos SQLite en `data/worldcup.db` e insertará los datos iniciales.*
+*Este comando leerá el esquema SQL en `database/schema.sql`, creará la base de datos SQLite en `data/worldcup.db` e insertará los datos iniciales usando la API nativa de Node.js.*
 
 ### 3. Ejecutar el servidor
 
@@ -78,7 +78,7 @@ A continuación se detallan las rutas de la API y ejemplos de comandos de consol
 ### 2. Listar Todos los Mundiales (Resumido o Completo)
 * **Ruta:** `GET /mundiales`
 * **Soporta Parámetro de Consulta:** `?include=full` (opcional)
-  * **Sin `include`:** Devuelve versión resumida (solo nombre, año, sede, campeón, slug e imagen).
+  * **Sin `include`:** Devuelve versión resumida (solo nombre, año, sede, campeón, slug e imagen con URL completa).
   * **Con `include=full`:** Devuelve toda la información detallada.
 * **Comandos:**
   ```bash
@@ -109,7 +109,7 @@ A continuación se detallan las rutas de la API y ejemplos de comandos de consol
 
 ### 4. Mundiales Ganados por un País
 * **Ruta:** `GET /campeon/:pais`
-* **Descripción:** Lista todas las ediciones en las que el país indicado fue campeón (búsqueda insensible a mayúsculas y minúsculas).
+* **Descripción:** Lista todas las ediciones en las que el país indicado fue campeón (búsqueda insensible a mayúsculas y minúsculas). Devuelve las URLs completas de las imágenes en los datos.
 * **Comando:**
   ```bash
   xh GET :4321/campeon/Argentina
@@ -142,38 +142,45 @@ A continuación se detallan las rutas de la API y ejemplos de comandos de consol
   }
   ```
 
-### 7. Imágenes Estáticas
+### 7. Imágenes Estáticas y URLs Dinámicas
 * **Ruta:** `GET /imagenes/:archivo`
-* **Descripción:** Permite ver y descargar la imagen representativa del mundial correspondiente. Las imágenes se guardan físicamente en `/public/imagenes/`.
-* **URL de ejemplo para navegador:**
+* **Descripción:** Permite ver y descargar la imagen representativa de cada mundial. Las imágenes se guardan físicamente en `/public/imagenes/`.
+* **URL de ejemplo para copiar en navegador:**
   `http://localhost:4321/imagenes/qatar-2022.avif`
+  *(Nota: El campo `imagen` en todas las respuestas JSON de la API devuelve automáticamente la dirección URL completa y dinámica del servidor, lista para ser copiada y visualizada directamente en el navegador).*
 
 ---
 
 ## 📁 Estructura del Proyecto
 
-La estructura sigue un diseño académico ordenado y simple:
+La estructura sigue un diseño académico ordenado y simple conforme a los lineamientos del curso:
 
 ```text
 /worldcup-api
 │
-├── database/
-│   ├── db.js          # Configuración y envoltura de promesas de SQLite
-│   ├── schema.sql      # Definición de la estructura de tablas SQL
-│   └── seed.js        # Script de población inicial de la BD
+├── data/              # Carpeta para la persistencia de datos
+│   └── mundiales.js   # Repositorio (Capa de Acceso a Datos / DatabaseSync)
 │
-├── public/
+├── database/          # Archivos de creación de base de datos
+│   ├── schema.sql     # Estructura e inicialización de tablas SQL
+│   └── seed.js        # Script de población de la BD usando node:sqlite
+│
+├── public/            # Archivos públicos de la aplicación
 │   └── imagenes/      # Carpeta contenedora de imágenes estáticas (.avif)
 │
-├── routes/
-│   └── mundiales.js   # Definición de endpoints y validaciones Zod
+├── routes/            # Rutas y controladores de la aplicación
+│   └── mundiales/     # Controladores individuales modulares
+│       ├── getAll.js
+│       ├── getByCampeon.js
+│       ├── getBySlug.js
+│       ├── getRandom.js
+│       ├── search.js
+│       └── search.schema.js
 │
-├── data/              # Carpeta generada automáticamente para albergar la BD SQLite (.db)
+├── evidencias/        # Capturas de pantalla de pruebas
 │
-├── evidencias/        # Capturas de pantalla de pruebas y de las rutas de la API
-│
-├── app.js             # Entrada del servidor Express y middleware de errores/404
-├── package.json       # Configuración y dependencias de npm
+├── app.js             # Entrada del servidor Express, enrutador y middleware de errores/404
+├── package.json       # Configuración y dependencias npm
 ├── README.md          # Documentación general de instalación y uso
 ├── REFERENCIAS.md     # Fuentes de información e investigación
 └── .gitignore         # Configuración de archivos ignorados por Git
@@ -188,10 +195,10 @@ En la carpeta [`/evidencias`](./evidencias) se encuentran almacenadas las captur
 * `01_root.png`: Prueba de ruta de inicio de la API.
 * `02_mundiales.png`: Lista de mundiales en versión resumida.
 * `03_mundiales_full.png`: Lista de mundiales completa (`?include=full`).
-* `04_mundial_qatar.png`: Detalle del mundial `qatar-2022`.
+* `04_mundial_qatar.png`: Detalle del mundial `qatar-2022` (incluye URL de imagen completa).
 * `05_mundial_inexistente.png`: Código 404 al buscar un mundial inexistente.
 * `06_campeon_argentina.png`: Lista de mundiales ganados por Argentina.
 * `07_random.png`: Detalle de un mundial cargado al azar.
 * `08_search_final.png`: Búsqueda de coincidencias exitosa para "final".
-* `09_search_ab.png`: Código 400 al realizar búsqueda con menos de 3 caracteres.
-* `10_imagen_qatar.png`: Imagen estática servida correctamente en el navegador.
+* `09_search_ab.png`: Código 400 (Zod error) al realizar búsqueda con menos de 3 caracteres.
+* `10_imagen_qatar.png`: Imagen estática servida correctamente en el navegador al copiar y pegar la URL dinámica del JSON.

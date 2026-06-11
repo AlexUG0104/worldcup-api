@@ -6,21 +6,21 @@ Este documento recopila las fuentes de información técnica, documentación ofi
 
 ## 📚 Documentación Técnica Oficial
 
-1. **Node.js Documentation**
-   * *Sitio consultado:* [https://nodejs.org/docs/latest/api/](https://nodejs.org/docs/latest/api/)
-   * *Propósito:* Consulta del sistema de módulos CommonJS (`require`/`module.exports`), operaciones de archivos con `fs` y rutas de archivos con `path`.
+1. **Node.js Documentation - ES Modules**
+   * *Sitio consultado:* [https://nodejs.org/docs/latest/api/esm.html](https://nodejs.org/docs/latest/api/esm.html)
+   * *Propósito:* Configuración de módulos ES6 nativos (`import`/`export`) en el entorno de Node.js mediante `"type": "module"`.
 
-2. **Express.js Framework**
+2. **Node.js Documentation - Native SQLite (DatabaseSync)**
+   * *Sitio consultado:* [https://nodejs.org/docs/latest/api/sqlite.html](https://nodejs.org/docs/latest/api/sqlite.html)
+   * *Propósito:* Consulta de especificaciones para el uso de la API nativa síncrona `DatabaseSync` introducida de forma estable a partir de Node.js 22, incluyendo la preparación de sentencias (`prepare`), consultas múltiples (`all`), consultas únicas (`get`) e inicialización de esquemas (`exec`).
+
+3. **Express.js Framework - Routing and Strict Routing**
    * *Sitio consultado:* [https://expressjs.com/es/guide/routing.html](https://expressjs.com/es/guide/routing.html)
-   * *Propósito:* Configuración del servidor HTTP, enrutamiento, definición de middlewares de control de errores, servicio de archivos estáticos y gestión de respuestas JSON.
-
-3. **SQLite3 Driver para Node.js**
-   * *Sitio consultado:* [https://github.com/TryGhost/node-sqlite3/wiki](https://github.com/TryGhost/node-sqlite3/wiki)
-   * *Propósito:* Integración y uso de sentencias SQL preparadas, manejo de conexiones a base de datos en memoria y física, y manipulación de callbacks asíncronos en Node.js.
+   * *Propósito:* Configuración del servidor HTTP, enrutamiento, habilitación de enrutamiento estricto (`strict routing`), servicio de archivos estáticos y gestión de respuestas JSON.
 
 4. **Zod - Schema Validation**
    * *Sitio consultado:* [https://zod.dev/](https://zod.dev/)
-   * *Propósito:* Declaración y verificación de tipos de esquemas de datos para parámetros de URL (slug, texto de búsqueda, país) y parámetros de consulta de Express.
+   * *Propósito:* Declaración y validación estricta de parámetros en la petición de búsqueda (`min`, `max`, `trim` y transformaciones de texto en minúsculas) usando `safeParse()`.
 
 ---
 
